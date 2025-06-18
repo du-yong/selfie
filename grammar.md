@@ -35,11 +35,11 @@ letter = "a" | ... | "z" | "A" | ... | "Z" .
 C\* Grammar:
 
 ```
-cstar      = { variable [ initialize ] ";" | procedure } .
+cstar      = { variable [ initialize ] ";" | procedure | struct } .
 
 variable   = type identifier .
 
-type       = "uint64_t" [ "*" ] .
+type       = ( "uint64_t" | "struct" identifier ) [ "*" ] .
 
 initialize = "=" [ cast ] [ "-" ] value .
 
@@ -49,7 +49,7 @@ value      = integer | character .
 
 statement  = assignment ";" | if | while | call ";" | return ";" .
 
-assignment = ( [ "*" ] identifier | "*" "(" expression ")" ) "=" expression .
+assignment = ( [ "*" ] identifier { "->" identifier } | "*" "(" expression ")" ) "=" expression .
 
 expression = arithmetic [ ( "==" | "!=" | "<" | ">" | "<=" | ">=" ) arithmetic ] .
 
@@ -58,7 +58,9 @@ arithmetic = term { ( "+" | "-" ) term } .
 term       = factor { ( "*" | "/" | "%" ) factor } .
 
 factor     = [ cast ] [ "-" ] [ "*" ]
-             ( "sizeof" "(" type ")" | literal | identifier | call | "(" expression ")" ) .
+             ( "sizeof" "(" type ")" | literal | identifier { "->" identifier } | call | "(" expression ")" ) .
+
+struct     = "struct" identifier "{" { variable ";" } "}" ";" .
 
 literal    = value | string .
 
